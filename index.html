@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Neutron Browser —— 一款基于 Electron 的现代 PC 级浏览器。多标签页、Edge 风格主题系统、下载管理、扩展系统，Windows 免费下载。" />
+  <meta name="keywords" content="Neutron Browser, Neutron浏览器, Electron 浏览器, PC 浏览器, 多标签页, 下载" />
+  <title>Neutron Browser · 现代 PC 浏览器</title>
+  <link rel="icon" type="image/png" href="assets/icon.png" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ============ 背景粒子画布 ============ -->
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+  <div class="page-glow" aria-hidden="true"></div>
+
+  <!-- ============ 导航栏 ============ -->
+  <nav class="nav" id="nav">
+    <div class="nav__inner">
+      <a class="nav__logo" href="#top">
+        <img src="assets/icon.png" alt="Neutron Browser 图标" class="nav__logo-img" />
+        <span class="nav__logo-text">Neutron<em>Browser</em></span>
+      </a>
+      <div class="nav__links">
+        <a href="#features" class="nav__link">功能特性</a>
+        <a href="#themes" class="nav__link">主题系统</a>
+        <a href="#preview" class="nav__link">界面预览</a>
+        <a href="#tech" class="nav__link">技术栈</a>
+        <a href="#download" class="nav__link">下载</a>
+        <a href="#changelog" class="nav__link">更新日志</a>
+      </div>
+      <div class="nav__actions">
+        <a href="https://github.com/2818194829/neutron-browser" target="_blank" rel="noopener" class="nav__github" title="GitHub 仓库">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.15c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.75 2.69 1.25 3.35.95.1-.74.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 5.74 0c2.19-1.49 3.15-1.18 3.15-1.18.62 1.59.23 2.76.11 3.05.73.81 1.18 1.83 1.18 3.09 0 4.41-2.69 5.38-5.25 5.67.41.35.77 1.05.77 2.12v3.15c0 .3.21.66.8.55A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+          GitHub
+        </a>
+        <a href="#download" class="btn btn--primary btn--sm">立即下载</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============ Hero ============ -->
+  <header class="hero" id="top">
+    <div class="hero__grid" aria-hidden="true"></div>
+    <div class="hero__content">
+      <div class="hero__badge reveal">
+        <span class="hero__badge-dot"></span>
+        v1.8.1 正式版已发布
+      </div>
+      <h1 class="hero__title reveal">
+        更快、更优雅的<br />
+        <span class="grad-text">现代 PC 浏览器</span>
+      </h1>
+      <p class="hero__subtitle reveal">
+        Neutron Browser 是一款基于 Electron 打造的 PC 级浏览器 —— 多标签页、Edge 风格主题系统、下载管理、书签与历史、扩展生态，为日常上网带来流畅、清爽、个性化的体验。
+      </p>
+      <div class="hero__actions reveal">
+        <a href="#download" class="btn btn--primary btn--lg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          免费下载 Windows 版
+        </a>
+        <a href="https://github.com/2818194829/neutron-browser" target="_blank" rel="noopener" class="btn btn--ghost btn--lg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          查看源代码
+        </a>
+      </div>
+      <ul class="hero__meta reveal">
+        <li>当前版本 <b>v1.8.1</b></li>
+        <li>支持 <b>Windows 10 / 11</b></li>
+        <li>开源许可 <b>MIT</b></li>
+        <li>安装包约 <b>77 MB</b></li>
+      </ul>
+    </div>
+
+    <!-- 浏览器窗口模拟 -->
+    <div class="mock reveal" aria-hidden="true">
+      <div class="mock__window">
+        <div class="mock__titlebar">
+          <span class="mock__dot mock__dot--r"></span>
+          <span class="mock__dot mock__dot--y"></span>
+          <span class="mock__dot mock__dot--g"></span>
+          <span class="mock__titlebar-title">Neutron Browser</span>
+          <span class="mock__titlebar-win"></span>
+        </div>
+        <div class="mock__tabs">
+          <div class="mock__tab mock__tab--active">
+            <span class="mock__favicon"></span>
+            新标签页
+            <span class="mock__tab-close">×</span>
+          </div>
+          <div class="mock__tab">
+            <span class="mock__favicon mock__favicon--gh"></span>
+            GitHub
+          </div>
+          <div class="mock__tab">
+            <span class="mock__favicon mock__favicon--bd"></span>
+            哔哩哔哩
+          </div>
+          <div class="mock__tab mock__tab--new">＋</div>
+        </div>
+        <div class="mock__toolbar">
+          <div class="mock__ctrl">←</div>
+          <div class="mock__ctrl">→</div>
+          <div class="mock__ctrl">⟳</div>
+          <div class="mock__address">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            neutron://newtab
+          </div>
+          <div class="mock__ctrl mock__ctrl--pin">📌</div>
+          <div class="mock__ext">🧩</div>
+        </div>
+        <div class="mock__body">
+          <div class="mock__newtab">
+            <div class="mock__brand">
+              <img src="assets/icon.png" alt="" />
+              <span>Neutron Browser</span>
+            </div>
+            <div class="mock__search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              搜索或输入网址
+            </div>
+            <div class="mock__shortcuts">
+              <div class="mock__sc"><span class="mock__sc-icon" style="--sc:#4f8bff">G</span>GitHub</div>
+              <div class="mock__sc"><span class="mock__sc-icon" style="--sc:#fb7299">B</span>哔哩哔哩</div>
+              <div class="mock__sc"><span class="mock__sc-icon" style="--sc:#34d399">N</span>知乎</div>
+              <div class="mock__sc"><span class="mock__sc-icon" style="--sc:#a78bfa">D</span>抖音</div>
+              <div class="mock__sc"><span class="mock__sc-icon" style="--sc:#fbbf24">C</span>CSDN</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mock__glow" aria-hidden="true"></div>
+    </div>
+  </header>
+
+  <!-- ============ 特性 ============ -->
+  <section class="section" id="features">
+    <div class="section__head reveal">
+      <span class="section__eyebrow">FEATURES</span>
+      <h2 class="section__title">一个浏览器，装下你的全部日常</h2>
+      <p class="section__desc">从多标签页到扩展生态，Neutron Browser 把 PC 浏览器该有的体验都打磨到位。</p>
+    </div>
+
+    <div class="features">
+      <article class="card reveal">
+        <div class="card__icon" style="--ic:#4f8bff">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="5" width="22" height="14" rx="2"/><line x1="6" y1="9" x2="10" y2="9"/><line x1="1" y1="12" x2="6" y2="12"/></svg>
+        </div>
+        <h3>多标签页浏览</h3>
+        <p>新建、切换、关闭、拖拽排序、固定、静音、复制标签页，多任务浏览游刃有余。</p>
+      </article>
+
+      <article class="card reveal">
+        <div class="card__icon" style="--ic:#a78bfa">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <h3>智能地址栏</h3>
+        <p>自动识别网址、IP、本地路径与搜索关键词，前进 / 后退 / 刷新 / 主页，还支持鼠标侧键导航。</p>
+      </article>
+
+      <article class="card reveal">
+        <div class="card__icon" style="--ic:#34d399">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M5 10l7-7 7 7"/></svg>
+        </div>
+        <h3>Edge 风格下载</h3>
+        <p>彩色文件图标、来源域名、实时进度与速度；暂停 / 继续 / 取消、重新开始、复制链接，工具栏环形进度与完成徽章。</p>
+      </article>
+
+      <article class="card reveal">
+        <div class="card__icon" style="--ic:#fbbf24">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg>
+        </div>
+        <h3>主题皮肤系统</h3>
+        <p>7 种强调色 × 12 套主题皮肤（海洋 / 森林 / 星空 / 樱花……）× 明暗模式，三维正交自由组合，打造独一无二的浏览器。</p>
+      </article>
+
+      <article class="card reveal">
+        <div class="card__icon" style="--ic:#fb7185">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 13.42 20.6a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82Z"/><circle cx="7" cy="7" r="1"/></svg>
+        </div>
+        <h3>扩展生态</h3>
+        <p>安装 .crx / .zip 扩展包、从 Edge 扩展商店按链接或 ID 安装、加载已解压目录；Edge 风格扩展管理与二级详情界面。</p>
+      </article>
+
+      <article class="card reveal">
+        <div class="card__icon" style="--ic:#2dd4bf">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
+        </div>
+        <h3>书签与历史</h3>
+        <p>书签栏快捷访问、文件夹整理、书签管理器；历史记录按日期分组、搜索、单条删除、一键清除，JSON 持久化存储。</p>
+      </article>
+
+      <article class="card reveal">
+        <div class="card__icon" style="--ic:#60a5fa">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79 2 2 0 0 0-1 1.71V15a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-.73a2 2 0 0 0-1-1.71 2 2 0 0 1-1.11-1.79V7a4 4 0 0 0-8 0v3.76Z"/></svg>
+        </div>
+        <h3>窗口置顶</h3>
+        <p>标题栏图钉按钮一键置顶 / 取消，置顶状态持久化，边看边写不再来回切换窗口。</p>
+      </article>
+
+      <article class="card reveal">
+        <div class="card__icon" style="--ic:#f472b6">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        </div>
+        <h3>自动更新</h3>
+        <p>检测到新版本后应用内自动下载、静默安装并自动重启，Edge 式一键更新，永远用上最新版本。</p>
+      </article>
+
+      <article class="card reveal">
+        <div class="card__icon" style="--ic:#94a3b8">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        </div>
+        <h3>完整快捷键</h3>
+        <p>Chrome 风格快捷键：Ctrl+T 新标签页、Ctrl+L 聚焦地址栏、Ctrl+J 下载、Ctrl+, 设置……全部内置。</p>
+      </article>
+
+      <article class="card reveal">
+        <div class="card__icon" style="--ic:#4ade80">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>
+        </div>
+        <h3>安全设计</h3>
+        <p>contextIsolation + contextBridge 安全架构、neutron:// 内部协议、下载 / 权限 / 弹窗 / 崩溃全程处理。</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ 主题系统 ============ -->
+  <section class="section section--alt" id="themes">
+    <div class="section__head reveal">
+      <span class="section__eyebrow">THEMES</span>
+      <h2 class="section__title">7 种强调色 × 12 套皮肤 × 明暗模式</h2>
+      <p class="section__desc">灵感源自 Microsoft Edge，却不止于 Edge。三维正交自由组合，从海洋到星空，从樱花到棋盘，总有一款属于你。</p>
+    </div>
+
+    <div class="theme-show reveal">
+      <div class="theme-show__accent">
+        <span class="theme-show__label">强调色</span>
+        <div class="theme-show__swatches">
+          <span class="swatch" style="--c:#4f8bff" data-name="蓝"></span>
+          <span class="swatch" style="--c:#ef4444" data-name="红"></span>
+          <span class="swatch" style="--c:#22c55e" data-name="绿"></span>
+          <span class="swatch" style="--c:#a855f7" data-name="紫"></span>
+          <span class="swatch" style="--c:#f97316" data-name="橙"></span>
+          <span class="swatch" style="--c:#ec4899" data-name="粉"></span>
+          <span class="swatch" style="--c:#14b8a6" data-name="青"></span>
+        </div>
+      </div>
+      <div class="theme-show__skins">
+        <span class="theme-show__label">主题皮肤</span>
+        <div class="theme-show__skin-cards">
+          <span class="skin-card" style="--a:#4f8bff;--b:#1d4ed8">海洋</span>
+          <span class="skin-card" style="--a:#15803d;--b:#065f46">森林</span>
+          <span class="skin-card" style="--a:#ea580c;--b:#7c2d12">日落</span>
+          <span class="skin-card" style="--a:#312e81;--b:#0f172a">午夜</span>
+          <span class="skin-card" style="--a:#be185d;--b:#881337">玫瑰</span>
+          <span class="skin-card" style="--a:#0ea5e9;--b:#155e75">波纹</span>
+          <span class="skin-card" style="--a:#0f172a;--b:#334155">棋盘</span>
+          <span class="skin-card" style="--a:#0b1026;--b:#4c1d95">星空</span>
+          <span class="skin-card" style="--a:#f9a8d4;--b:#f472b6">樱花</span>
+          <span class="skin-card" style="--a:#059669;--b:#a7f3d0">薄荷</span>
+          <span class="skin-card" style="--a:#7c3aed;--b:#fbbf24">黄昏</span>
+          <span class="skin-card" style="--a:#334155;--b:#64748b">默认</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 主题实时预览条 -->
+    <div class="theme-bar reveal" id="themeBar">
+      <div class="theme-bar__titlebar">
+        <span class="mock__dot mock__dot--r"></span>
+        <span class="mock__dot mock__dot--y"></span>
+        <span class="mock__dot mock__dot--g"></span>
+        <span class="theme-bar__title">外观实时预览</span>
+      </div>
+      <div class="theme-bar__tabs">
+        <span class="theme-bar__tab theme-bar__tab--active">新标签页</span>
+        <span class="theme-bar__tab">设置</span>
+      </div>
+      <div class="theme-bar__toolbar">
+        <span class="theme-bar__chip">←</span>
+        <span class="theme-bar__chip">→</span>
+        <span class="theme-bar__address">neutron://settings</span>
+        <span class="theme-bar__chip">📌</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 界面预览 ============ -->
+  <section class="section" id="preview">
+    <div class="section__head reveal">
+      <span class="section__eyebrow">SCREENSHOTS</span>
+      <h2 class="section__title">内置页面，体验尽在掌握</h2>
+      <p class="section__desc">新标签页、设置、历史、书签、下载、扩展 —— 六个内置页面通过 neutron:// 协议直达，浏览器自己就是一整套生产力工具。</p>
+    </div>
+
+    <div class="preview reveal">
+      <div class="preview__tabs" role="tablist">
+        <button class="preview__tab is-active" data-page="newtab">新标签页</button>
+        <button class="preview__tab" data-page="downloads">下载管理</button>
+        <button class="preview__tab" data-page="history">历史记录</button>
+        <button class="preview__tab" data-page="bookmarks">书签</button>
+        <button class="preview__tab" data-page="extensions">扩展</button>
+      </div>
+      <div class="preview__frame">
+        <div class="preview__browser">
+          <div class="preview__titlebar">
+            <span class="mock__dot mock__dot--r"></span>
+            <span class="mock__dot mock__dot--y"></span>
+            <span class="mock__dot mock__dot--g"></span>
+            <span class="preview__addr" id="previewAddr">neutron://newtab</span>
+          </div>
+          <div class="preview__screen" id="previewScreen">
+            <!-- 由 JS 渲染各页面模拟图 -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 技术栈 ============ -->
+  <section class="section section--alt" id="tech">
+    <div class="section__head reveal">
+      <span class="section__eyebrow">TECH STACK</span>
+      <h2 class="section__title">扎实的技术底座</h2>
+      <p class="section__desc">基于久经考验的桌面与 Web 技术，轻量、安全、可扩展。</p>
+    </div>
+    <div class="tech reveal">
+      <div class="tech__item"><span class="tech__logo">⚛</span><b>Electron</b><small>≥ v28 · 桌面运行环境</small></div>
+      <div class="tech__item"><span class="tech__logo">JS</span><b>原生 JavaScript</b><small>ES2022+ · 零框架依赖</small></div>
+      <div class="tech__item"><span class="tech__logo">▦</span><b>HTML5 / CSS3</b><small>Flexbox · Grid · CSS Variables</small></div>
+      <div class="tech__item"><span class="tech__logo">📦</span><b>electron-builder</b><small>NSIS 向导式安装包</small></div>
+      <div class="tech__item"><span class="tech__logo">🗄</span><b>JSON 存储</b><small>书签 / 历史 / 设置 / 下载</small></div>
+      <div class="tech__item"><span class="tech__logo">🔌</span><b>IPC 通信</b><small>contextBridge + ipcMain</small></div>
+    </div>
+    <div class="tech__note reveal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      <p>Cookie 与本地存储跨标签页共享并持久保存；无边框窗口、自定义标题栏、窗口状态记忆；下载 / 权限 / 弹窗 / 渲染进程崩溃均有完善处理。</p>
+    </div>
+  </section>
+
+  <!-- ============ 下载 ============ -->
+  <section class="section" id="download">
+    <div class="section__head reveal">
+      <span class="section__eyebrow">DOWNLOAD</span>
+      <h2 class="section__title">下载 Neutron Browser</h2>
+      <p class="section__desc">免费、开源（MIT）、无广告、无捆绑。下载即用，安装向导式体验。</p>
+    </div>
+
+    <div class="download reveal">
+      <div class="download__card">
+        <div class="download__head">
+          <img src="assets/icon.png" alt="Neutron Browser" class="download__icon" />
+          <div>
+            <h3>Neutron Browser</h3>
+            <p>Windows 安装包 · v1.8.1 · 约 77 MB</p>
+          </div>
+          <span class="download__badge">最新版</span>
+        </div>
+        <div class="download__sys">
+          <span>Windows 10 / 11</span>
+          <span>x64</span>
+          <span>NSIS 安装向导</span>
+        </div>
+        <a href="https://github.com/2818194829/neutron-browser/releases/download/v1.8.1/Neutron-Browser-Setup-1.8.1.exe" class="btn btn--primary btn--lg btn--block">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          下载 Neutron Browser v1.8.1
+        </a>
+        <div class="download__links">
+          <a href="https://github.com/2818194829/neutron-browser/releases" target="_blank" rel="noopener">查看全部历史版本 →</a>
+          <a href="https://github.com/2818194829/neutron-browser" target="_blank" rel="noopener">GitHub 仓库 →</a>
+        </div>
+      </div>
+
+      <div class="download__steps">
+        <h3>安装说明</h3>
+        <ol>
+          <li><b>下载安装包</b>点击上方按钮，下载 <code>Neutron-Browser-Setup-1.8.1.exe</code>。</li>
+          <li><b>运行安装向导</b>可自定义安装目录，勾选创建桌面 / 开始菜单快捷方式。</li>
+          <li><b>开始使用</b>启动 Neutron Browser，导入书签、选择主题，即刻畅游网络。</li>
+        </ol>
+        <div class="download__tip">
+          <b>💡 小贴士</b>
+          <p>安装后可在「设置 → 关于」中一键「检查更新」，应用内自动下载并静默安装新版本。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 更新日志 ============ -->
+  <section class="section section--alt" id="changelog">
+    <div class="section__head reveal">
+      <span class="section__eyebrow">CHANGELOG</span>
+      <h2 class="section__title">v1.8.1 更新亮点</h2>
+      <p class="section__desc">下载功能全面增强，扩展系统大幅进化。</p>
+    </div>
+
+    <div class="changelog reveal">
+      <div class="changelog__col">
+        <h3>⬇ 下载功能全面增强</h3>
+        <ul>
+          <li>文件图标升级为真实系统图标（exe / PDF / 图片按文件本身显示），明暗主题双套配色</li>
+          <li>修复下载完成后状态不切换、「打开文件」按钮不显示的问题</li>
+          <li>修复暂停 / 取消无效，暂停 / 继续按钮同位置切换</li>
+          <li>新增「重新开始」按钮与右键菜单（重新开始 / 复制链接 / 打开文件 / 打开文件夹 / 移除）</li>
+          <li>操作按钮始终显示，恢复面板「全部显示」入口</li>
+        </ul>
+      </div>
+      <div class="changelog__col">
+        <h3>🧩 扩展系统大幅增强</h3>
+        <ul>
+          <li>扩展详情二级界面（Edge 风格）：权限、站点访问、来源、扩展 ID、大小、启用开关、移除</li>
+          <li>新增「扩展选项」入口，修复无法进入扩展设置页的问题（URL 协议解析 + 扩展 API 全量 Polyfill）</li>
+          <li>支持拖拽 .crx / .zip 扩展包直接安装</li>
+          <li>修复皮肤（海洋蓝 / 樱花等）下弹出层按钮白字白底不可见的问题</li>
+        </ul>
+      </div>
+    </div>
+    <div class="changelog__more reveal">
+      <a href="https://github.com/2818194829/neutron-browser/releases" target="_blank" rel="noopener" class="btn btn--ghost btn--md">查看完整版本记录 →</a>
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section class="cta">
+    <div class="cta__inner reveal">
+      <h2>准备好体验了吗？</h2>
+      <p>现在下载 Neutron Browser，开启更优雅的上网方式。</p>
+      <a href="#download" class="btn btn--primary btn--lg">免费下载 Windows 版</a>
+    </div>
+  </section>
+
+  <!-- ============ 页脚 ============ -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <img src="assets/icon.png" alt="Neutron Browser" />
+        <b>Neutron Browser</b>
+        <p>一款基于 Electron 的现代 PC 级浏览器，免费开源（MIT）。</p>
+      </div>
+      <div class="footer__cols">
+        <div class="footer__col">
+          <h4>产品</h4>
+          <a href="#features">功能特性</a>
+          <a href="#themes">主题系统</a>
+          <a href="#preview">界面预览</a>
+          <a href="#download">下载</a>
+        </div>
+        <div class="footer__col">
+          <h4>开发者</h4>
+          <a href="https://github.com/2818194829/neutron-browser" target="_blank" rel="noopener">GitHub 仓库</a>
+          <a href="https://github.com/2818194829/neutron-browser/releases" target="_blank" rel="noopener">Releases</a>
+          <a href="https://github.com/2818194829/neutron-browser/issues" target="_blank" rel="noopener">Issues</a>
+        </div>
+        <div class="footer__col">
+          <h4>协议</h4>
+          <a href="https://github.com/2818194829/neutron-browser/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2026 Neutron Browser · 使用 Electron 构建 · Made with ❤️</span>
+      <span>当前版本 v1.8.1</span>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
