@@ -2,6 +2,25 @@
 
 Neutron Browser（`我的开发/02 我的PC浏览器`）的展示官网，纯静态站点（HTML + CSS + JS，无任何依赖、无需构建）。
 
+## 🌐 线上地址（已部署）
+
+> **https://2818194829.github.io/neutron-browser-site/**
+
+- 托管：GitHub Pages（免费）
+- 仓库：https://github.com/2818194829/neutron-browser-site
+- 部署方式：`main` 分支根目录直接发布
+
+## 本地开发与更新流程
+
+修改代码后，本地预览确认无误，然后推送即可自动发布（GitHub Pages 约 1-2 分钟生效）：
+
+```bash
+cd "03 Neutron浏览器官网"
+git add -A
+git commit -m "update site"
+git push origin main
+```
+
 ## 目录结构
 
 ```text
@@ -41,7 +60,13 @@ python -m http.server 8000
 2. 下载区按钮的直链：`.../releases/download/vX.Y.Z/Neutron-Browser-Setup-X.Y.Z.exe`
 3. 下载卡片中的版本 / 大小文字
 
-## 部署建议
+## 部署（已完成）
 
-- **GitHub Pages**：把本目录推送到仓库，启用 Pages 即可
-- **任意静态托管**：Vercel / Netlify / 云服务器 nginx 均可，纯静态零配置
+当前使用 **GitHub Pages** 免费部署：
+
+1. 新建仓库 `neutron-browser-site` 并推送 `main` 分支
+2. 仓库 Settings → Pages → Source 选择 `main` / root（或通过 API 开启）
+3. 生成网址：`https://2818194829.github.io/neutron-browser-site/`
+
+如需自定义域名：购买域名后，在仓库 Pages 设置里添加 CNAME（如 `www.xxx.cn` → `2818194829.github.io`），并把域名写入仓库根目录 `CNAME` 文件即可。
+
