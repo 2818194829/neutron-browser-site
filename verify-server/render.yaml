@@ -1,0 +1,36 @@
+# Render Blueprint：一键部署验证码后端（免费计划）
+# 用法：把本目录（verify-server）推到 GitHub 仓库 → Render 新建 Blueprint / Web Service 选择该仓库即可
+services:
+  - type: web
+    name: neutron-verify-server
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/verify/check
+    envVars:
+      # 管理令牌（必填，登录 /admin 用）。sync:false = 部署后在 Render Dashboard 手动填写，不写入仓库
+      - key: ADMIN_TOKEN
+        sync: false
+      # 邮箱验证码（SMTP）配置
+      - key: VERIFY_EMAIL_ENABLED
+        sync: false
+      - key: VERIFY_EMAIL_HOST
+        sync: false
+      - key: VERIFY_EMAIL_PORT
+        sync: false
+      - key: VERIFY_EMAIL_USER
+        sync: false
+      - key: VERIFY_EMAIL_PASS
+        sync: false
+      - key: VERIFY_EMAIL_FROM
+        sync: false
+      # 短信验证码（Twilio）配置
+      - key: VERIFY_SMS_ENABLED
+        sync: false
+      - key: VERIFY_SMS_SID
+        sync: false
+      - key: VERIFY_SMS_TOKEN
+        sync: false
+      - key: VERIFY_SMS_FROM
+        sync: false

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neutron Browser · 验证码服务管理</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+    background: linear-gradient(180deg, #eef1f6, #e2e6ee);
+    min-height: 100vh;
+    padding: 32px 16px;
+    color: #202124;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  .card {
+    background: #fff; border-radius: 14px; padding: 24px 28px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.1);
+  }
+  h1 { font-size: 20px; margin-bottom: 4px; }
+  .sub { font-size: 13px; color: #5f6368; margin-bottom: 20px; }
+  .field { margin-bottom: 14px; display: flex; flex-direction: column; gap: 5px; }
+  .field label { font-size: 13px; color: #5f6368; }
+  .field input[type="text"], .field input[type="password"], .field input[type="number"] {
+    height: 36px; padding: 0 12px; border: 1px solid #dadce0; border-radius: 8px;
+    font-size: 14px; outline: none;
+  }
+  .field input:focus { border-color: #1a73e8; box-shadow: 0 0 0 2px rgba(26,115,232,0.15); }
+  .row { display: flex; gap: 12px; align-items: center; }
+  .row .field { flex: 1; }
+  .btn {
+    height: 36px; padding: 0 18px; border: none; border-radius: 8px; font-size: 14px; cursor: pointer;
+    background: #1a73e8; color: #fff;
+  }
+  .btn:hover { background: #1765cc; }
+  .btn.ghost { background: #f1f3f4; color: #202124; border: 1px solid #dadce0; }
+  .btn.ghost:hover { background: #e8eaed; }
+  .section-title { font-size: 15px; font-weight: 600; margin: 22px 0 12px; padding-top: 18px; border-top: 1px solid #e8eaed; }
+  .status { font-size: 13px; margin-top: 8px; min-height: 18px; }
+  .ok { color: #188038; }
+  .err { color: #d93025; }
+  .switch { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-size: 14px; }
+  .switch input { width: 16px; height: 16px; accent-color: #1a73e8; cursor: pointer; }
+  #loginBox { text-align: center; }
+  #loginBox .field { max-width: 360px; margin: 16px auto; }
+  .token-hint { font-size: 12px; color: #80868b; margin-top: 10px; }
+  .hidden { display: none; }
+  .help { font-size: 12px; color: #80868b; line-height: 1.8; margin-top: 6px; }
+  .help b { color: #1a73e8; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 登录 -->
+  <div class="card hidden" id="loginBox">
+    <h1>Neutron Browser · 验证码服务管理</h1>
+    <p class="sub">请输入管理令牌（首次启动服务时打印在终端）</p>
+    <div class="field">
+      <label for="tokenInput">管理令牌</label>
+      <input type="password" id="tokenInput" placeholder="粘贴管理令牌">
+    </div>
+    <button class="btn" id="btnLogin">登录管理</button>
+    <p class="token-hint">令牌保存在服务端 config.json 中，切勿泄露。</p>
+  </div>
+
+  <!-- 管理面板 -->
+  <div class="card hidden" id="panel">
+    <h1>验证码服务管理</h1>
+    <p class="sub">配置保存后，Neutron Browser 用户即可真实接收验证码（浏览器端无需任何配置）</p>
+
+    <div class="section-title">邮箱验证码（SMTP）</div>
+    <div class="switch">
+      <input type="checkbox" id="emailEnabled">
+      <label for="emailEnabled">启用邮箱验证码</label>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="emailHost">SMTP 服务器</label>
+        <input type="text" id="emailHost" placeholder="smtp.qq.com">
+      </div>
+      <div class="field" style="max-width: 110px;">
+        <label for="emailPort">端口</label>
+        <input type="number" id="emailPort" value="465">
+      </div>
+    </div>
+    <div class="field">
+      <label for="emailUser">发件账号</label>
+      <input type="text" id="emailUser" placeholder="如 2818194829@qq.com">
+    </div>
+    <div class="field">
+      <label for="emailPass">授权码 / 密码（留空或填 ****** 表示不修改）</label>
+      <input type="password" id="emailPass" placeholder="SMTP 授权码">
+    </div>
+    <p class="help"><b>获取 QQ 邮箱授权码：</b>登录 mail.qq.com → 设置 → 账户 → 开启「POP3/SMTP 服务」→ 短信验证后复制授权码。</p>
+    <div class="row" style="margin-top: 12px;">
+      <button class="btn ghost" id="btnTestEmail">发送测试邮件</button>
+      <input type="text" id="testEmail" placeholder="测试收件邮箱" style="height:36px;padding:0 12px;border:1px solid #dadce0;border-radius:8px;flex:1;font-size:13px;outline:none;">
+    </div>
+    <p class="status" id="emailStatus"></p>
+
+    <div class="section-title">手机短信验证码（Twilio）</div>
+    <div class="switch">
+      <input type="checkbox" id="smsEnabled">
+      <label for="smsEnabled">启用短信验证码</label>
+    </div>
+    <div class="field">
+      <label for="smsSid">Twilio Account SID</label>
+      <input type="text" id="smsSid" placeholder="Twilio Account SID">
+    </div>
+    <div class="field">
+      <label for="smsToken">Auth Token（留空或填 ****** 表示不修改）</label>
+      <input type="password" id="smsToken" placeholder="Twilio Auth Token">
+    </div>
+    <div class="field">
+      <label for="smsFrom">发送号码（E.164 格式，如 +15017122661）</label>
+      <input type="text" id="smsFrom" placeholder="+15017122661">
+    </div>
+    <div class="row" style="margin-top: 12px;">
+      <button class="btn ghost" id="btnTestSms">发送测试短信</button>
+      <input type="text" id="testSms" placeholder="测试手机号" style="height:36px;padding:0 12px;border:1px solid #dadce0;border-radius:8px;flex:1;font-size:13px;outline:none;">
+    </div>
+    <p class="status" id="smsStatus"></p>
+
+    <div style="margin-top: 22px; display: flex; gap: 10px;">
+      <button class="btn" id="btnSave">保存配置</button>
+      <button class="btn ghost" id="btnLogout">退出</button>
+    </div>
+    <p class="status" id="saveStatus"></p>
+  </div>
+
+</div>
+
+<script>
+  let token = '';
+
+  function $(id) { return document.getElementById(id); }
+  function setStatus(el, text, type) {
+    el.textContent = text;
+    el.className = 'status ' + (type || '');
+  }
+
+  async function api(path, method, body) {
+    const res = await fetch(path + '?token=' + encodeURIComponent(token), {
+      method: method || 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    return res.json();
+  }
+
+  // 登录
+  $('btnLogin').addEventListener('click', async () => {
+    token = $('tokenInput').value.trim();
+    if (!token) { setStatus($('tokenInput').parentElement.querySelector('.status'), '请输入令牌', 'err'); }
+    const r = await api('/api/admin/config', 'GET');
+    if (!r.ok) { setStatus(undefined); alert('令牌无效'); return; }
+    fillForm(r.config);
+    $('loginBox').classList.add('hidden');
+    $('panel').classList.remove('hidden');
+    setStatus($('saveStatus'), '已登录管理面板', 'ok');
+  });
+
+  function fillForm(c) {
+    $('emailEnabled').checked = !!(c.verifyEmail && c.verifyEmail.enabled);
+    $('emailHost').value = (c.verifyEmail && c.verifyEmail.host) || '';
+    $('emailPort').value = (c.verifyEmail && c.verifyEmail.port) || 465;
+    $('emailUser').value = (c.verifyEmail && c.verifyEmail.user) || '';
+    $('emailPass').value = (c.verifyEmail && c.verifyEmail.pass === '******') ? '******' : '';
+    $('smsEnabled').checked = !!(c.verifySms && c.verifySms.enabled);
+    $('smsSid').value = (c.verifySms && c.verifySms.sid) || '';
+    $('smsToken').value = (c.verifySms && c.verifySms.token === '******') ? '******' : '';
+    $('smsFrom').value = (c.verifySms && c.verifySms.fromNumber) || '';
+  }
+
+  function readForm() {
+    return {
+      verifyEmail: {
+        enabled: $('emailEnabled').checked,
+        host: $('emailHost').value.trim(),
+        port: Number($('emailPort').value) || 465,
+        user: $('emailUser').value.trim(),
+        pass: $('emailPass').value || '******',
+        from: '',
+      },
+      verifySms: {
+        enabled: $('smsEnabled').checked,
+        provider: 'twilio',
+        sid: $('smsSid').value.trim(),
+        token: $('smsToken').value || '******',
+        fromNumber: $('smsFrom').value.trim(),
+      },
+    };
+  }
+
+  $('btnSave').addEventListener('click', async () => {
+    const r = await api('/api/admin/config', 'POST', readForm());
+    setStatus($('saveStatus'), r.ok ? '已保存' : '保存失败：' + (r.error || ''), r.ok ? 'ok' : 'err');
+  });
+
+  $('btnTestEmail').addEventListener('click', async () => {
+    const account = $('testEmail').value.trim();
+    if (!account) { setStatus($('emailStatus'), '请填写测试收件邮箱', 'err'); return; }
+    // 先保存再测试
+    await api('/api/admin/config', 'POST', readForm());
+    setStatus($('emailStatus'), '正在发送...');
+    const r = await api('/api/admin/test', 'POST', { account });
+    setStatus($('emailStatus'), r.ok ? r.message : r.error, r.ok ? 'ok' : 'err');
+  });
+
+  $('btnTestSms').addEventListener('click', async () => {
+    const account = $('testSms').value.trim();
+    if (!account) { setStatus($('smsStatus'), '请填写测试手机号', 'err'); return; }
+    await api('/api/admin/config', 'POST', readForm());
+    setStatus($('smsStatus'), '正在发送...');
+    const r = await api('/api/admin/test', 'POST', { account });
+    setStatus($('smsStatus'), r.ok ? r.message : r.error, r.ok ? 'ok' : 'err');
+  });
+
+  $('btnLogout').addEventListener('click', () => {
+    token = '';
+    $('tokenInput').value = '';
+    $('panel').classList.add('hidden');
+    $('loginBox').classList.remove('hidden');
+  });
+</script>
+</body>
+</html>
