@@ -139,7 +139,7 @@
           <div class="pg__row">
             <div class="pg__row-icon" style="--c:#0891b2">ZIP</div>
             <div class="pg__row-main">
-              <div class="pg__row-title">source-code-v1.10.0.zip</div>
+              <div class="pg__row-title">source-code-v1.10.1.zip</div>
               <div class="pg__row-sub">github.com · 6.8 MB</div>
               <div class="pg__bar"><i style="width:34%"></i></div>
             </div>
@@ -149,8 +149,8 @@
           <div class="pg__row">
             <div class="pg__row-icon" style="--c:#059669">EXE</div>
             <div class="pg__row-main">
-              <div class="pg__row-title">Neutron-Browser-Setup-1.10.0.exe</div>
-              <div class="pg__row-sub">github.com · 77.0 MB</div>
+              <div class="pg__row-title">Neutron-Browser-Setup-1.10.1.exe</div>
+              <div class="pg__row-sub">github.com · 100 MB</div>
               <div class="pg__bar"><i style="width:100%;background:#34d399"></i></div>
             </div>
             <span class="pg__row-meta">✓ 已完成</span>
